@@ -1,0 +1,20 @@
+import "nanopb.proto";
+
+package sems; 
+message SensorData
+{ 
+	required uint32    type = 1;
+	required bytes     data = 2 [(nanopb).max_size = 128];
+}
+
+message SensorDataList{
+	repeated SensorData list = 1;
+}
+
+message ActionData
+{
+	required uint32 id = 1;
+	required uint32 cmd = 2;
+	optional bytes data = 3 [(nanopb).max_size = 128];
+	optional uint32 state = 4;
+}
