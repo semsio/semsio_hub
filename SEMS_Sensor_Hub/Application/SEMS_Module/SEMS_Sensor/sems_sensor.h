@@ -7,16 +7,18 @@
 #include "app_error.h"
 #include "app_twi.h"
 #include "app_timer.h"
+#include "app_error.h"
 #include "ble_services.h"
 
+#define SEMS_TWI_SDA         27
+#define SEMS_TWI_SCL         26
 #define SEMS_APP_TIMER_PRESCALER    APP_TIMER_PRESCALER     /**< prescaler of the app timer. */
 
-#define SEMS_TWI_TAG                 0x1000    
-#define SEMS_HUMIDTY_TAG             SEMS_TWI_TAG + 0x0010
-#define SEMS_TEMPERATURE_TAG         SEMS_TWI_TAG + 0x0020
-#define SEMS_LUMINOSITY_TAG          SEMS_TWI_TAG + 0x0030
+#define SEMS_CATE_SENSOR        0x00
+#define SEMS_CATE_OPERATOR      
 
-#define SEMS_GPIO_TAG                 0x2000  
+#define SEMS_TWI_TAG                 0x1000
+#define SEMS_GPIO_TAG                0x2000
 
 /**
  * @brief stensor state.
@@ -145,19 +147,6 @@ struct sems_sensor_s
         sensor_id.data_size = size;                     \
     } while(0)
 
-    
-extern  app_twi_t sems_twi_instance;                ///< APP_TWI_INSTANCE(0) for TWI sensor
-
-#define P_SEMS_TWI_INSTANCE &sems_twi_instance      ///< Address of sems_twi_instance;
-
-/**
- * @brief Function for initializing SEMS sensor control
- * 
- * This function initialize APP_TWI_INSTANCE(0) and GPIOTE.
- *
- * @note If TWI init failed or GPIOTE init failed then this function will return a error code.
- */
-ret_code_t sems_sensor_control_init(void);
 
 /**
  * @brief Function for manual flush SEMS sensor data.
@@ -249,6 +238,7 @@ ret_code_t sems_sensor_uninit(sems_sensor_t *p_sensor);
  * @retval NRF_ERROR_INVALID_STATE      If the sensor has not been initialized.
  */
 ret_code_t sems_sensor_set_event_handler(sems_sensor_t *p_sensor, sems_sensor_event_handler_t p_event_handler, void * p_event_config);
+
 
 #endif
 

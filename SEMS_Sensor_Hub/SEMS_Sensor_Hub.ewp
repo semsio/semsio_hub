@@ -341,10 +341,10 @@
           <state>$PROJ_DIR$\Application\SEMS_Libs\nanobp</state>
           <state>$PROJ_DIR$\Application\SEMS_Utils</state>
           <state>$PROJ_DIR$\Application\SEMS_ProtoBuf</state>
-          <state>$PROJ_DIR$\Application\SEMS_Sensors_Control</state>
-          <state>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Action\SEMS_IR_Encoder</state>
-          <state>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Action</state>
-          <state>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Sensor</state>
+          <state>$PROJ_DIR$\Application\SEMS_Module</state>
+          <state>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\SEMS_IR_Encoder</state>
+          <state>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator</state>
+          <state>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor</state>
           <state>$PROJ_DIR$\Application\SEMS_BLE_Services</state>
           <state>$NRF5_SDK12$\examples\bsp</state>
           <state>$NRF5_SDK12$\components</state>
@@ -2288,15 +2288,6 @@
     </file>
   </group>
   <group>
-    <name>SEMS_ProtoBuf</name>
-    <file>
-      <name>$PROJ_DIR$\Application\SEMS_ProtoBuf\sems.pb.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Application\SEMS_ProtoBuf\sems.pb.h</name>
-    </file>
-  </group>
-  <group>
     <name>SEMS_BLE_Services</name>
     <file>
       <name>$PROJ_DIR$\Application\SEMS_BLE_Services\ble_action_service.c</name>
@@ -2327,63 +2318,84 @@
     <name>SEMS_Libs</name>
   </group>
   <group>
-    <name>SEMS_Sensors_Control</name>
+    <name>SEMS_Module</name>
     <group>
-      <name>SEMS_Action</name>
+      <name>SEMS_Operator</name>
       <group>
         <name>SEMS_IR_Encoder</name>
         <file>
-          <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Action\SEMS_IR_Encoder\sems_ir_nec_encoder.c</name>
+          <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\SEMS_IR_Encoder\sems_ir_nec_encoder.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Action\SEMS_IR_Encoder\sems_ir_nec_encoder.h</name>
+          <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\SEMS_IR_Encoder\sems_ir_nec_encoder.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Action\SEMS_IR_Encoder\sems_ir_raw_encoder.c</name>
+          <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\SEMS_IR_Encoder\sems_ir_raw_encoder.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Action\SEMS_IR_Encoder\sems_ir_raw_encoder.h</name>
+          <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\SEMS_IR_Encoder\sems_ir_raw_encoder.h</name>
         </file>
       </group>
       <file>
-        <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Action\sems_ir_action.c</name>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\sems_ir_operator.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Action\sems_ir_action.h</name>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\sems_ir_operator.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\sems_operator.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\sems_operator.h</name>
       </file>
     </group>
     <group>
       <name>SEMS_Sensor</name>
       <file>
-        <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Sensor\GPIOSensor.c</name>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\GPIOSensor.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Sensor\GPIOSensor.h</name>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\GPIOSensor.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Sensor\HTU21D.c</name>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\HTU21D.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Sensor\HTU21D.h</name>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\HTU21D.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Sensor\TSL2561.c</name>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\sems_sensor.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\SEMS_Sensor\TSL2561.h</name>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\sems_sensor.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\TSL2561.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\TSL2561.h</name>
       </file>
     </group>
     <file>
-      <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\sems_sensor.c</name>
+      <name>$PROJ_DIR$\Application\SEMS_Module\sems_module.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\sems_sensor.h</name>
+      <name>$PROJ_DIR$\Application\SEMS_Module\sems_module.h</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\sensor_handler.c</name>
+      <name>$PROJ_DIR$\Application\SEMS_Module\sensor_handler.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Application\SEMS_Sensors_Control\sensor_handler.h</name>
+      <name>$PROJ_DIR$\Application\SEMS_Module\sensor_handler.h</name>
+    </file>
+  </group>
+  <group>
+    <name>SEMS_ProtoBuf</name>
+    <file>
+      <name>$PROJ_DIR$\Application\SEMS_ProtoBuf\sems.pb.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Application\SEMS_ProtoBuf\sems.pb.h</name>
     </file>
   </group>
   <group>

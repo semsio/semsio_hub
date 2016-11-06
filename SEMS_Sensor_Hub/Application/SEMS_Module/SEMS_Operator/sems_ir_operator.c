@@ -1,4 +1,4 @@
-#include "sems_ir_action.h"
+#include "sems_ir_operator.h"
 #include "app_error.h"
 #include "nrf.h"
 #include "nrf_gpio.h"
@@ -20,8 +20,10 @@ static uint32_t pulse_count_calculate(uint32_t time_us)
     return (time_us + (SEMS_IR_CARRIER_LOW_US + SEMS_IR_CARRIER_HIGH_US) / 2) / (SEMS_IR_CARRIER_LOW_US + SEMS_IR_CARRIER_HIGH_US);
 }
 
-ret_code_t sems_ir_init(nrf_drv_gpiote_pin_t ir_pin)
+static ret_code_t sems_ir_init(sems_operator_t const *p_operator)
 {
+    nrf_drv_gpiote_pin_t *p_ir_pin = (nrf_drv_gpiote_pin_t*)p_operator->p_operator_config;
+    nrf_drv_gpiote_pin_t ir_pin = *p_ir_pin;
     ret_code_t err_code = 0;
     
     nrf_drv_gpiote_out_config_t config = GPIOTE_CONFIG_OUT_TASK_TOGGLE(false);
@@ -62,6 +64,18 @@ ret_code_t sems_ir_init(nrf_drv_gpiote_pin_t ir_pin)
     err_code |= sd_ppi_channel_enable_set(1 << SEMS_IR_PPI_CH_A | 1 << SEMS_IR_PPI_CH_B | 1 << SEMS_IR_PPI_CH_C | 1 << SEMS_IR_PPI_CH_D | 1 << SEMS_IR_PPI_CH_E);
     
     m_busy = false;
+    return err_code;
+}
+
+static ret_code_t sems_ir_uninit(sems_operator_t const *p_operator)
+{
+    nrf_drv_gpiote_pin_t ir_pin = (nrf_drv_gpiote_pin_t)&p_operator->p_operator_config;
+    ret_code_t err_code = 0;
+    err_code |= sd_ppi_channel_enable_clr(1 << SEMS_IR_PPI_CH_A | 1 << SEMS_IR_PPI_CH_B | 1 << SEMS_IR_PPI_CH_C | 1 << SEMS_IR_PPI_CH_D | 1 << SEMS_IR_PPI_CH_E);
+    err_code |= sd_ppi_group_task_disable(SEMS_IR_PPI_GROUP);
+    err_code |= sd_nvic_DisableIRQ(SEMS_IR_CARRIER_COUNTER_IRQn);
+    nrf_drv_gpiote_out_uninit(ir_pin);
+    nrf_drv_gpiote_out_task_disable(ir_pin);
     return err_code;
 }
 
@@ -110,10 +124,14 @@ ret_code_t sems_ir_row_send(uint32_t p_time_us[], uint32_t length)
     return NRF_SUCCESS;
 }
 
-ret_code_t sems_ir_send(void* p_data, sems_ir_encode_t encode_func)
+static ret_code_t sems_ir_execute(sems_operator_t const *p_operator, void *p_data)
 {
-    //check param
-    if (p_data == NULL || encode_func == NULL)
+    if (p_data == NULL)
+        return NRF_ERROR_INVALID_PARAM;
+    
+    sems_ir_operate_data_t *p_operate_data = (sems_ir_operate_data_t*)p_data;
+    
+    if (p_operate_data->p_data == NULL || p_operate_data->encode_handler == NULL)
     {
         return NRF_ERROR_INVALID_PARAM;
     }
@@ -129,7 +147,7 @@ ret_code_t sems_ir_send(void* p_data, sems_ir_encode_t encode_func)
         raw_buffer[i] = 0;
     }
     uint8_t buffer_length;
-    ret_code_t err_code = encode_func(p_data, raw_buffer, &buffer_length);
+    ret_code_t err_code = p_operate_data->encode_handler(p_operate_data->p_data, raw_buffer, &buffer_length);
     if (err_code != NRF_SUCCESS)
         return err_code;
     if (buffer_length > 0) 
@@ -141,3 +159,12 @@ ret_code_t sems_ir_send(void* p_data, sems_ir_encode_t encode_func)
 }
 
 
+static sems_ir_config ir_config;
+static sems_operator_t sems_operator;
+
+sems_operator_t* get_sems_ir_operator(nrf_drv_gpiote_pin_t ir_pin)
+{
+    ir_config = ir_pin;
+    SEMS_OPERATOR_INIT(sems_operator,SEMS_IR_TAG, &ir_config, sems_ir_init, sems_ir_uninit, sems_ir_execute);
+    return &sems_operator;
+}
