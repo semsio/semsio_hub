@@ -2348,6 +2348,12 @@
       <file>
         <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\sems_operator.h</name>
       </file>
+      <file>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\sems_TEMPLATE_operator.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\sems_TEMPLATE_operator.h</name>
+      </file>
     </group>
     <group>
       <name>SEMS_Sensor</name>

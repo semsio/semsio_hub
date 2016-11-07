@@ -70,9 +70,9 @@ struct sems_operator_s
  * @param[in] operator_id       SEMS operator instance, will be initialized.
  * @parem[in] tag               Operator tag.
  * @param[in] p_config          Pointer to the operator config instance; Value can't be NULL.
- * @param[in] init              Pointer to initialize sensor hanlder functionn. Value can't be NULL. 
+ * @param[in] init              Pointer to initialize operator hanlder functionn. Value can't be NULL. 
                                 If initial is not necessary, just create a function and return NRF_SUCCESS.
- * @param[in] uninit            Pointer to uninitialize sensor hanlder function. Value can't be NULL.
+ * @param[in] uninit            Pointer to uninitialize operator hanlder function. Value can't be NULL.
                                 If uninitial is not necessary, just create a function and return NRF_SUCCESS.
  * @param[in] execute           Pointer to execute operation hanlder function.Value can't be NULL.
  *
@@ -101,7 +101,7 @@ struct sems_operator_s
  * @retval NRF_ERROR_INVALID_STATE      If the operator has been initialized.
  * @retval NRF_ERROR_INVALID_DATA       If the operator was invalid.
  *
- * @note sensor_init of the sensor can't be NULL;
+ * @note operator_init of the operator can't be NULL;
  */
 ret_code_t sems_operator_init(sems_operator_t *p_operator);
 
@@ -110,14 +110,14 @@ ret_code_t sems_operator_init(sems_operator_t *p_operator);
  *
  * operator_uninit of the operator will be invoked when this function execute.
  *
- * @param[in] p_operator      Pointer to the sensor instance.
+ * @param[in] p_operator      Pointer to the operator instance.
  *
  * @retval NRF_SUCCESS                  If the operator was successfully uninitialized.
  * @retval NRF_ERROR_INVALID_PARAM      If p_operator is NULL.
- * @retval NRF_ERROR_INVALID_STATE      If the operator satat is SEMS_SENSOR_UNINITED.
+ * @retval NRF_ERROR_INVALID_STATE      If the operator satat is SEMS_OPERATOR_UNINITED.
  * @retval NRF_ERROR_INVALID_DATA       If the operator was invalid.
  *
- * @note sensor_uninit of the sensor can't be NULL.
+ * @note operator_uninit of the operator can't be NULL.
  */
 ret_code_t sems_operator_uninit(sems_operator_t *p_operator);
 
@@ -126,15 +126,15 @@ ret_code_t sems_operator_uninit(sems_operator_t *p_operator);
  *
  * execute_operation of the operator will be invoked when this function execute.
  *
- * @param[in] p_operator      Pointer to the sensor instance.
+ * @param[in] p_operator      Pointer to the operator instance.
  * @param[in] p_data          Pointer to the execute data instance.
  *
  * @retval NRF_SUCCESS                  If the operation success.
  * @retval NRF_ERROR_INVALID_PARAM      If p_operator is NULL.
- * @retval NRF_ERROR_INVALID_STATE      If the operator satat is SEMS_SENSOR_UNINITED.
+ * @retval NRF_ERROR_INVALID_STATE      If the operator satat is SEMS_OPERATOR_UNINITED.
  * @retval NRF_ERROR_INVALID_DATA       If the operator was invalid.
  *
- * @note sensor_uninit of the sensor can't be NULL.
+ * @note execute_operation of the operator can't be NULL.
  */
 ret_code_t sems_operator_execute(sems_operator_t *p_operator, void* p_data);
 #endif

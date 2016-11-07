@@ -19,7 +19,7 @@ typedef struct
 } sems_TEMPLATE_data_t;
 
 /**
- * @brief Holde TEMPLATE config data.=
+ * @brief Holde TEMPLATE sensor config data.
  */
 typedef struct
 {

@@ -1,5 +1,5 @@
 /** @file
- * @brief Common defines and macros for TSL2561 digital luminosity senosr.
+ * @brief Template sensor for help develpor build a custom sensor.
  */
 #include "TemplateSensor.h"
 
