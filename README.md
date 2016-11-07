@@ -11,4 +11,4 @@ nRF sdk file location has been set as a variable named NRF5_SDK12 in framework. 
 SemsIO Hub try to simplfy building sensor on ble.If any problem you have, feel free to contact us.
 
 -  Wiki: http://www.sems.io/wiki/
--  Forum: http://www.sems.io/forum/category/2/general-discussion
+-  Forum: http://www.sems.io/forum/category/5/semsio-hub
