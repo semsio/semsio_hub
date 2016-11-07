@@ -3,6 +3,8 @@
 #include "TSL2561.h"
 #include "HTU21D.h"
 #include "GPIOSensor.h"
+#include "sems_module.h"
+#include "sems_operator.h"
 #include "sems_sensor.h"
 #include "nrf_delay.h"
 #include "nrf_drv_clock.h"
@@ -12,7 +14,7 @@
 #include "app_timer.h"
 #include "nrf_gpio.h"
 #include "test_sensor.h"
-#include "sems_ir_action.h"
+#include "sems_ir_operator.h"
 #include "sems_ir_nec_encoder.h"
 #include "sems_ir_raw_encoder.h"
 
@@ -29,7 +31,7 @@ static void data_handler(sems_sensor_t const* p_sensor, void* data, ret_code_t e
             NRF_LOG_INFO("GPIO Error Code %d \n", err_code);
         }
     } else 
-        if (p_sensor->sensor_tag == SEMS_HUMIDTY_TAG) 
+        if (p_sensor->sensor_tag == SEMS_HUMIDTY_TEMPERATURE_TAG) 
     {
         if (err_code == NRF_SUCCESS) {
             sems_htu21d_data_t *htu21d_data = data;
@@ -62,6 +64,8 @@ static void event_data_handler(sems_sensor_t const* p_sensor, void* p_data, ret_
     ir_send();
 }
 
+static sems_operator_t *m_ir_operator_prt;
+
 void test_sensor()
 {
     uint32_t err_code = NRF_LOG_INIT(NULL);
@@ -73,7 +77,7 @@ void test_sensor()
 
     nrf_drv_clock_lfclk_request(NULL);
 
-    err_code = sems_sensor_control_init();
+    err_code = sems_module_init();
     APP_ERROR_CHECK(err_code);
 
 
@@ -89,7 +93,9 @@ void test_sensor()
     err_code = sems_sensor_init(p_gpio20);
     APP_ERROR_CHECK(err_code);
 
-    sems_ir_init(24);
+    m_ir_operator_prt = get_sems_ir_operator(24);
+    err_code = sems_operator_init(m_ir_operator_prt);
+    APP_ERROR_CHECK(err_code);
 
     err_code = sems_sensor_polling(p_htu21d, data_handler, 1000*5);
     APP_ERROR_CHECK(err_code);
@@ -111,11 +117,7 @@ void test_sensor()
     }
 }
 
-void init_ir_action()
-{
-    sems_sensor_control_init();
-    sems_ir_init(11);
-}
+
 
 void ir_send()
 {
@@ -127,15 +129,18 @@ void ir_send()
 //  ret_code_t err_code = sems_ir_send(&data, sems_ir_nec_encode);
     
     uint16_t raw_data [10] ={ 100,200,300,400,500,600,700,800,900,1000};
-    
+
     sems_raw_data data;
     data.p_raw_data = raw_data;
     data.length = 10;
     
-  ret_code_t err_code = sems_ir_send(&data, sems_ir_raw_encode);
-  if (err_code != NRF_SUCCESS)
-  {
+    sems_ir_operate_data_t ir_data;
+    ir_data.p_data = &data;
+    ir_data.encode_handler = sems_ir_raw_encode;
+    ret_code_t err_code = sems_operator_execute(m_ir_operator_prt, &ir_data);
+    if (err_code != NRF_SUCCESS)
+    {
     NRF_LOG_INFO("IR BUSY \n");
     NRF_LOG_FLUSH();
-  }
+    }
 }

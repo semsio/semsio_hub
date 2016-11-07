@@ -5,6 +5,10 @@
 #include "app_error.h"
 #include "app_twi.h"
 #include "sems_sensor.h"
+#include "sems_module.h"
+
+#define SEMS_HUMIDTY_TEMPERATURE_TAG             SEMS_TWI_TAG + 0x0010
+
 
 ///< HTU21D  TWI salve address
 #define HTU21D_ADDRESS 0x40

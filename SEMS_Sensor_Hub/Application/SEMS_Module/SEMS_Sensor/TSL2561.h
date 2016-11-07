@@ -4,8 +4,11 @@
 
 #include "sems_sensor.h"
 #include "app_twi.h"
+#include "sems_module.h"
 
 #pragma once
+
+#define SEMS_LUMINOSITY_TAG          SEMS_TWI_TAG + 0x0030
 
 ///< TSL2561 register
 #define TSL2561_CMD           0x80

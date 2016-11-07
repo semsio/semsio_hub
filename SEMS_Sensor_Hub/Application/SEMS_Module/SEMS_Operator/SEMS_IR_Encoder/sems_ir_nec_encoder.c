@@ -1,5 +1,5 @@
-#include "sems_ir_action.h"
-#include "sems__ir_encoder.h"
+#include "sems_ir_operator.h"
+#include "sems_ir_nec_encoder.h"
 
 
 
@@ -112,7 +112,7 @@ ret_code_t sems_ir_nec_encode(void* p_data, uint32_t p_raw_buffer[], uint8_t* p_
             }
         }
     }
-    *p_raw_lenght = index -1;
+    *p_raw_lenght = index;
     
     return NRF_SUCCESS;
     

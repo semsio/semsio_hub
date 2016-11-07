@@ -53,6 +53,22 @@ ret_code_t sems_gpio_sensor_init(sems_sensor_t const *p_sensor)
 
 }
 
+static ret_code_t free_gpio_sensor(sems_sensor_t const *p_sensor)
+{
+    if (p_sensor == NULL)
+    {
+        return NRF_ERROR_INVALID_PARAM;
+    }
+    sems_gpio_sensor_config_t const *p_config = p_sensor->p_sensor_config;
+    int pin = p_config->pin;
+    free((sems_gpio_sensor_config_t*)p_sensor->p_sensor_config);
+    free((sems_gpio_pin_val_t*)p_sensor->p_sensor_data);
+    free((app_timer_t*)(p_sensor->app_timer_id));
+    sensor_map[pin] = NULL;
+    
+    return NRF_SUCCESS;
+}
+
 ret_code_t sems_gpio_sensor_uninit(sems_sensor_t const *p_sensor)
 {
     if (p_sensor == NULL)
@@ -61,6 +77,8 @@ ret_code_t sems_gpio_sensor_uninit(sems_sensor_t const *p_sensor)
     sems_gpio_sensor_config_t const *p_config = p_sensor->p_sensor_config;
     nrf_drv_gpiote_in_uninit(p_config->pin);
     nrf_drv_gpiote_in_event_disable(p_config->pin);
+    
+    free_gpio_sensor(p_sensor);
     return NRF_SUCCESS;
 }
 
@@ -164,21 +182,7 @@ sems_sensor_t* create_gpio_sensor(nrf_drv_gpiote_pin_t pin, nrf_gpio_pin_pull_t 
     return p_sensor;
 }
 
-ret_code_t free_gpio_sensor(sems_sensor_t *p_sensor)
-{
-    if (p_sensor == NULL)
-    {
-        return NRF_ERROR_INVALID_PARAM;
-    }
-    sems_gpio_sensor_config_t const *p_config = p_sensor->p_sensor_config;
-    int pin = p_config->pin;
-    free((sems_gpio_sensor_config_t*)p_sensor->p_sensor_config);
-    free((sems_gpio_pin_val_t*)p_sensor->p_sensor_data);
-    free((app_timer_t*)(p_sensor->app_timer_id));
-    sensor_map[pin] = NULL;
-    
-    return NRF_SUCCESS;
-}
+
 
 
 

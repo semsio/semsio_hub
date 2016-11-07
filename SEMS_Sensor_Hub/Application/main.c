@@ -22,7 +22,9 @@
 #include "HTU21D.h"
 #include "GPIOSensor.h"
 #include "sensor_handler.h"
-#include "sems_ir_action.h"
+#include "sems_module.h"
+#include "sems_operator.h"
+#include "sems_ir_operator.h"
 #include "pb_encode.h"
 
 #include "ble_services.h"
@@ -33,7 +35,6 @@
 #include "app_scheduler.h"
 #include "nordic_common.h"
 
-#include "sems_ir_action.h"
 #include "sems_ir_raw_encoder.h"
 #include "sems_ir_nec_encoder.h"
 
@@ -112,6 +113,8 @@ static void sensor_event_handler(sems_sensor_t const* p_sensor, void* data, ret_
     sems_ble_advertising_once(p_sensor,&event_data->pin_val,sizeof(*(uint8_t*)data));
 }
 
+static sems_operator_t *m_ir_operator_prt;
+
 /**@brief Function for sensor initialization.
  */
 void sensor_init()
@@ -119,7 +122,7 @@ void sensor_init()
     uint32_t err_code;
     
     //init sensor control
-    err_code=sems_sensor_control_init();
+    err_code=sems_module_init();
     APP_ERROR_CHECK(err_code);
     
     //create htu21d sensor,add to ble getter,start polling
@@ -145,9 +148,10 @@ void sensor_init()
     nrf_gpiote_polarity_t t = NRF_GPIOTE_POLARITY_HITOLO;
     err_code = sems_sensor_set_event_handler(p_gpio20, sensor_event_handler, &t);
     
-    
-    err_code = sems_ir_init(24);
+    m_ir_operator_prt = get_sems_ir_operator(24);
+    err_code = sems_operator_init(m_ir_operator_prt);
     APP_ERROR_CHECK(err_code);
+
 }
 
 /**@brief Callback function for ble action event.
@@ -169,8 +173,10 @@ void ble_action_handler(sems_ActionData *action_data)
               
               for (int i = 0; i < action_data->data.size; i += 2)
                   data.p_raw_data[i/2] = action_data->data.bytes[i+1] | (uint16_t)action_data->data.bytes[i] << 8;
-
-              ret_code_t err_code = sems_ir_send(&data, sems_ir_raw_encode);
+              sems_ir_operate_data_t ir_data;
+              ir_data.p_data = &data;
+              ir_data.encode_handler = sems_ir_raw_encode;
+              ret_code_t err_code = sems_operator_execute(m_ir_operator_prt, &ir_data);
               if (err_code != NRF_SUCCESS)
               {
                   NRF_LOG_INFO("IR BUSY \n");
@@ -185,7 +191,10 @@ void ble_action_handler(sems_ActionData *action_data)
               data.address = action_data->data.bytes[0];
               data.command = action_data->data.bytes[1];
               
-              ret_code_t err_code = sems_ir_send(&data, sems_ir_nec_encode);
+              sems_ir_operate_data_t ir_data;
+              ir_data.p_data = &data;
+              ir_data.encode_handler = sems_ir_nec_encode;
+              ret_code_t err_code = sems_operator_execute(m_ir_operator_prt, &ir_data);
           }
           break;
       }

@@ -2,7 +2,7 @@
  * @brief Common defines for IR raw data.
  */
 
-#include "sems_ir_action.h"
+#include "sems_ir_operator.h"
 
 #pragma once
 

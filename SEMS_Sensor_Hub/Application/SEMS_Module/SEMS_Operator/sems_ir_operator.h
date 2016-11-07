@@ -9,7 +9,10 @@
 #include <stdbool.h>
 #include "app_util_platform.h"
 #include "nrf_drv_gpiote.h"
+#include "sems_operator.h"
 #include "app_error.h"
+
+#define SEMS_IR_TAG                0x5000
 
 #define SEMS_IR_TIMER_CARRIER                NRF_TIMER1                     ///< Generate 38Khz carrier.
 
@@ -29,8 +32,12 @@
 #define SEMS_IR_CARRIER_LOW_US   18         ///< Duty Cycle:0.3
 #define SEMS_IR_CARRIER_HIGH_US  8
 
-#define SEMS_IR_BUFFER_LEN  128             ///< Max length of raw data buffer.
+#define SEMS_IR_BUFFER_LEN       128             ///< Max length of raw data buffer.
 
+/**
+ * @brief IR operator config type.
+ */
+typedef nrf_drv_gpiote_pin_t sems_ir_config;
 
 /**
  * @brief Convert send data to raw data function prototype. 
@@ -43,20 +50,23 @@
  */
 typedef ret_code_t (*sems_ir_encode_t)(void* p_send_data, uint32_t p_raw_buffer[], uint8_t* p_raw_lenght);
 
-/**
- * @brief Function for initialize IR action.
- * This function will setup timer and PPI.
- */
-ret_code_t sems_ir_init(nrf_drv_gpiote_pin_t ir_pin);
 
 /**
- * @brief Function for send IR data.
- *
- * @param[in] p_data        Pointer to data instance, which will be sent.
- * @param[in] encode_func   Pointer to the data encode function.
- * 
+ * @brief Struct for holde IR operate data.
  */
-ret_code_t sems_ir_send(void* p_data, sems_ir_encode_t encode_func);
+typedef struct 
+{
+    void*                   p_data;             /*< IR operate data */
+    sems_ir_encode_t        encode_handler;     /*< IR operate data encode function */
+    
+} sems_ir_operate_data_t;
+
+/**
+ * @brief Function for get a SEMS IR operator.
+ *
+ * @retval  Point to SEMS IR operator instance.
+ */  
+sems_operator_t* get_sems_ir_operator(nrf_drv_gpiote_pin_t ir_pin);
 
     
 #endif

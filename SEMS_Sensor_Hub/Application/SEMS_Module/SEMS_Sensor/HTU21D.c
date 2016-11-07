@@ -157,7 +157,7 @@ static sems_sensor_t sensor;
 
 sems_sensor_t* get_sems_htu21d_sensor()
 {
-    SEMS_SENSOR_INIT(sensor,SEMS_HUMIDTY_TAG, &htu21d_config, &htu21d_data, sizeof(sems_htu21d_data_t), get_sensor_data, sems_htu21d_sensor_init, sems_htu21d_sensor_uninit, NULL);
+    SEMS_SENSOR_INIT(sensor,SEMS_HUMIDTY_TEMPERATURE_TAG, &htu21d_config, &htu21d_data, sizeof(sems_htu21d_data_t), get_sensor_data, sems_htu21d_sensor_init, sems_htu21d_sensor_uninit, NULL);
     return &sensor;
 }
 
