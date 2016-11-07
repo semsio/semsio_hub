@@ -2370,6 +2370,12 @@
         <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\sems_sensor.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\TemplateSensor.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\TemplateSensor.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\TSL2561.c</name>
       </file>
       <file>
