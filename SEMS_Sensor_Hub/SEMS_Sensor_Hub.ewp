@@ -342,8 +342,8 @@
           <state>$PROJ_DIR$\Application\SEMS_Utils</state>
           <state>$PROJ_DIR$\Application\SEMS_ProtoBuf</state>
           <state>$PROJ_DIR$\Application\SEMS_Module</state>
-          <state>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\SEMS_IR_Encoder</state>
-          <state>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator</state>
+          <state>$PROJ_DIR$\Application\SEMS_Module\SEMS_Actuator\SEMS_IR_Encoder</state>
+          <state>$PROJ_DIR$\Application\SEMS_Module\SEMS_Actuator</state>
           <state>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor</state>
           <state>$PROJ_DIR$\Application\SEMS_BLE_Services</state>
           <state>$NRF5_SDK12$\examples\bsp</state>
@@ -2324,35 +2324,35 @@
       <group>
         <name>SEMS_IR_Encoder</name>
         <file>
-          <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\SEMS_IR_Encoder\sems_ir_nec_encoder.c</name>
+          <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Actuator\SEMS_IR_Encoder\sems_ir_nec_encoder.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\SEMS_IR_Encoder\sems_ir_nec_encoder.h</name>
+          <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Actuator\SEMS_IR_Encoder\sems_ir_nec_encoder.h</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\SEMS_IR_Encoder\sems_ir_raw_encoder.c</name>
+          <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Actuator\SEMS_IR_Encoder\sems_ir_raw_encoder.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\SEMS_IR_Encoder\sems_ir_raw_encoder.h</name>
+          <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Actuator\SEMS_IR_Encoder\sems_ir_raw_encoder.h</name>
         </file>
       </group>
       <file>
-        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\sems_ir_operator.c</name>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Actuator\sems_actuator.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\sems_ir_operator.h</name>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Actuator\sems_actuator.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\sems_operator.c</name>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Actuator\sems_ir_actuator.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\sems_operator.h</name>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Actuator\sems_ir_actuator.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\sems_TEMPLATE_operator.c</name>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Actuator\sems_TEMPLATE_actuator.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Operator\sems_TEMPLATE_operator.h</name>
+        <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Actuator\sems_TEMPLATE_actuator.h</name>
       </file>
     </group>
     <group>

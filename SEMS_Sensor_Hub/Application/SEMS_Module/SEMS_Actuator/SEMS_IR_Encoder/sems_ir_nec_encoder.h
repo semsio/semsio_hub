@@ -1,7 +1,7 @@
 /** @file
  * @brief Common defines for IR NEC protocal data.
  */
-#include "sems_ir_operator.h"
+#include "sems_ir_actuator.h"
 
 #pragma once
 

@@ -9,7 +9,7 @@
 #include <stdbool.h>
 #include "app_util_platform.h"
 #include "nrf_drv_gpiote.h"
-#include "sems_operator.h"
+#include "sems_actuator.h"
 #include "app_error.h"
 
 #define SEMS_IR_TAG                0x5000
@@ -35,7 +35,7 @@
 #define SEMS_IR_BUFFER_LEN       128             ///< Max length of raw data buffer.
 
 /**
- * @brief IR operator config type.
+ * @brief IR actuator config type.
  */
 typedef nrf_drv_gpiote_pin_t sems_ir_config;
 
@@ -62,11 +62,11 @@ typedef struct
 } sems_ir_operate_data_t;
 
 /**
- * @brief Function for get a SEMS IR operator.
+ * @brief Function for get a SEMS IR actuator.
  *
- * @retval  Point to SEMS IR operator instance.
+ * @retval  Point to SEMS IR actuator instance.
  */  
-sems_operator_t* get_sems_ir_operator(nrf_drv_gpiote_pin_t ir_pin);
+sems_actuator_t* get_sems_ir_actuator(nrf_drv_gpiote_pin_t ir_pin);
 
     
 #endif
