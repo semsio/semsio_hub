@@ -1,4 +1,4 @@
-#include "sems_ir_operator.h"
+#include "sems_ir_actuator.h"
 #include "app_error.h"
 #include "nrf.h"
 #include "nrf_gpio.h"
@@ -20,9 +20,9 @@ static uint32_t pulse_count_calculate(uint32_t time_us)
     return (time_us + (SEMS_IR_CARRIER_LOW_US + SEMS_IR_CARRIER_HIGH_US) / 2) / (SEMS_IR_CARRIER_LOW_US + SEMS_IR_CARRIER_HIGH_US);
 }
 
-static ret_code_t sems_ir_init(sems_operator_t const *p_operator)
+static ret_code_t sems_ir_init(sems_actuator_t const *p_actuator)
 {
-    nrf_drv_gpiote_pin_t *p_ir_pin = (nrf_drv_gpiote_pin_t*)p_operator->p_operator_config;
+    nrf_drv_gpiote_pin_t *p_ir_pin = (nrf_drv_gpiote_pin_t*)p_actuator->p_actuator_config;
     nrf_drv_gpiote_pin_t ir_pin = *p_ir_pin;
     ret_code_t err_code = 0;
     
@@ -67,9 +67,9 @@ static ret_code_t sems_ir_init(sems_operator_t const *p_operator)
     return err_code;
 }
 
-static ret_code_t sems_ir_uninit(sems_operator_t const *p_operator)
+static ret_code_t sems_ir_uninit(sems_actuator_t const *p_actuator)
 {
-    nrf_drv_gpiote_pin_t ir_pin = (nrf_drv_gpiote_pin_t)&p_operator->p_operator_config;
+    nrf_drv_gpiote_pin_t ir_pin = (nrf_drv_gpiote_pin_t)&p_actuator->p_actuator_config;
     ret_code_t err_code = 0;
     err_code |= sd_ppi_channel_enable_clr(1 << SEMS_IR_PPI_CH_A | 1 << SEMS_IR_PPI_CH_B | 1 << SEMS_IR_PPI_CH_C | 1 << SEMS_IR_PPI_CH_D | 1 << SEMS_IR_PPI_CH_E);
     err_code |= sd_ppi_group_task_disable(SEMS_IR_PPI_GROUP);
@@ -124,7 +124,7 @@ ret_code_t sems_ir_row_send(uint32_t p_time_us[], uint32_t length)
     return NRF_SUCCESS;
 }
 
-static ret_code_t sems_ir_execute(sems_operator_t const *p_operator, void *p_data)
+static ret_code_t sems_ir_execute(sems_actuator_t const *p_actuator, void *p_data)
 {
     if (p_data == NULL)
         return NRF_ERROR_INVALID_PARAM;
@@ -160,11 +160,11 @@ static ret_code_t sems_ir_execute(sems_operator_t const *p_operator, void *p_dat
 
 
 static sems_ir_config ir_config;
-static sems_operator_t sems_operator;
+static sems_actuator_t sems_actuator;
 
-sems_operator_t* get_sems_ir_operator(nrf_drv_gpiote_pin_t ir_pin)
+sems_actuator_t* get_sems_ir_actuator(nrf_drv_gpiote_pin_t ir_pin)
 {
     ir_config = ir_pin;
-    SEMS_OPERATOR_INIT(sems_operator,SEMS_IR_TAG, &ir_config, sems_ir_init, sems_ir_uninit, sems_ir_execute);
-    return &sems_operator;
+    SEMS_ACTUATOR_INIT(sems_actuator,SEMS_IR_TAG, &ir_config, sems_ir_init, sems_ir_uninit, sems_ir_execute);
+    return &sems_actuator;
 }

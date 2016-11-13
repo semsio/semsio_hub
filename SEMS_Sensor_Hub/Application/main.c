@@ -23,8 +23,8 @@
 #include "GPIOSensor.h"
 #include "sensor_handler.h"
 #include "sems_module.h"
-#include "sems_operator.h"
-#include "sems_ir_operator.h"
+#include "sems_actuator.h"
+#include "sems_ir_actuator.h"
 #include "pb_encode.h"
 
 #include "ble_services.h"
@@ -113,7 +113,7 @@ static void sensor_event_handler(sems_sensor_t const* p_sensor, void* data, ret_
     sems_ble_advertising_once(p_sensor,&event_data->pin_val,sizeof(*(uint8_t*)data));
 }
 
-static sems_operator_t *m_ir_operator_prt;
+static sems_actuator_t *m_ir_actuator_prt;
 
 /**@brief Function for sensor initialization.
  */
@@ -148,8 +148,8 @@ void sensor_init()
     nrf_gpiote_polarity_t t = NRF_GPIOTE_POLARITY_HITOLO;
     err_code = sems_sensor_set_event_handler(p_gpio20, sensor_event_handler, &t);
     
-    m_ir_operator_prt = get_sems_ir_operator(24);
-    err_code = sems_operator_init(m_ir_operator_prt);
+    m_ir_actuator_prt = get_sems_ir_actuator(24);
+    err_code = sems_actuator_init(m_ir_actuator_prt);
     APP_ERROR_CHECK(err_code);
 
 }
@@ -176,7 +176,7 @@ void ble_action_handler(sems_ActionData *action_data)
               sems_ir_operate_data_t ir_data;
               ir_data.p_data = &data;
               ir_data.encode_handler = sems_ir_raw_encode;
-              ret_code_t err_code = sems_operator_execute(m_ir_operator_prt, &ir_data);
+              ret_code_t err_code = sems_actuator_execute(m_ir_actuator_prt, &ir_data);
               if (err_code != NRF_SUCCESS)
               {
                   NRF_LOG_INFO("IR BUSY \n");
@@ -194,7 +194,7 @@ void ble_action_handler(sems_ActionData *action_data)
               sems_ir_operate_data_t ir_data;
               ir_data.p_data = &data;
               ir_data.encode_handler = sems_ir_nec_encode;
-              ret_code_t err_code = sems_operator_execute(m_ir_operator_prt, &ir_data);
+              ret_code_t err_code = sems_actuator_execute(m_ir_actuator_prt, &ir_data);
           }
           break;
       }
