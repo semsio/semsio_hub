@@ -38,22 +38,28 @@ typedef struct
 
 /**
  * @brief setup a HTU21D config.
+ * 
+ * @param[in] p_config      Pointer to tsl2561 config instance, will be setup.
  */
-#define HTU21D_CONFIG                                                       \
-    {                                                                       \
-        .p_app_twi = P_SEMS_TWI_INSTANCE,                                   \
-        .slave_addr = HTU21D_ADDRESS,                                       \
-    }
+#define HTU21D_CONFIG_SETUP(p_config)              \
+    do                                             \
+    {                                              \
+        p_config->p_app_twi = P_SEMS_TWI_INSTANCE; \
+        p_config->slave_addr = HTU21D_ADDRESS;     \
+    } while (0)
 
 /**
  * @brief setup a empty HTU21D  result data.
+ *
+ * @param[in] p_config Pointer to tsl
  */
-#define HTU21D_DATA_EMPTY                                                   \
-    {                                                                       \
-        .humidity = 0,                                                      \
-        .humidity = 0,                                                      \
-    }
-    
+#define HTU21D_DATA_EMPTY_SETUP(p_data) \
+    do                                  \
+    {                                   \
+        p_data->humidity = 0;           \
+        p_data->humidity = 0;           \
+    } while (0)
+
 /**
  * @brief Function for get a HTU21D SEMS sensor.
  *

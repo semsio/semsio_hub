@@ -56,6 +56,6 @@ sems_actuator_t* get_sems_TEMPLATE_actuator()
     config.config2 = 1;
     
     //TODO: setup actuator;
-    SEMS_ACTUATOR_INIT(sems_actuator,SEMS_TEMPLATE_ACTUATOR_TAG, &config, sems_TEMPLATE_init, sems_TEMPLATE_uninit, sems_TEMPLATE_execute);
+    SEMS_ACTUATOR_SETUP(sems_actuator,SEMS_TEMPLATE_ACTUATOR_TAG, &config, sems_TEMPLATE_init, sems_TEMPLATE_uninit, sems_TEMPLATE_execute);
     return &sems_actuator;
 }

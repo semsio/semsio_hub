@@ -52,6 +52,8 @@ ret_code_t sems_TEMPLATE_set_event(sems_sensor_t const  *p_sensor, bool enable, 
     return NRF_SUCCESS;
 }
 
+
+
 /**
  * @brief Build a sensor instance.
  *
@@ -70,6 +72,7 @@ sems_sensor_t* get_sems_TEMPLATE_sensor()
     
     //TODO: setup sensor;
     //If your sensor can't be static you can check GPIOSensor.c¡£
-    SEMS_SENSOR_INIT(sensor,SEMS_TEMPLATE_SENSOR_TAG, &config, &data, sizeof(data), get_sensor_data, sems_TEMPLATE_sensor_init, sems_TEMPLATE_sensor_uninit, sems_TEMPLATE_set_event);
+
+    SEMS_SENSOR_SETUP(sensor,SEMS_TEMPLATE_SENSOR_TAG, &config, &data, sizeof(data), get_sensor_data, sems_TEMPLATE_sensor_init, sems_TEMPLATE_sensor_uninit, sems_TEMPLATE_set_event);
     return &sensor;
 }
