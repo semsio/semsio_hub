@@ -2320,7 +2320,7 @@
   <group>
     <name>SEMS_Module</name>
     <group>
-      <name>SEMS_Operator</name>
+      <name>SEMS_Actuator</name>
       <group>
         <name>SEMS_IR_Encoder</name>
         <file>
@@ -2350,9 +2350,15 @@
       </file>
       <file>
         <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Actuator\sems_TEMPLATE_actuator.c</name>
+        <excluded>
+          <configuration>Debug</configuration>
+        </excluded>
       </file>
       <file>
         <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Actuator\sems_TEMPLATE_actuator.h</name>
+        <excluded>
+          <configuration>Debug</configuration>
+        </excluded>
       </file>
     </group>
     <group>
@@ -2377,9 +2383,15 @@
       </file>
       <file>
         <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\TemplateSensor.c</name>
+        <excluded>
+          <configuration>Debug</configuration>
+        </excluded>
       </file>
       <file>
         <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\TemplateSensor.h</name>
+        <excluded>
+          <configuration>Debug</configuration>
+        </excluded>
       </file>
       <file>
         <name>$PROJ_DIR$\Application\SEMS_Module\SEMS_Sensor\TSL2561.c</name>

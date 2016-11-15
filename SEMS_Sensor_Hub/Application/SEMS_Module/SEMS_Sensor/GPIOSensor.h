@@ -43,4 +43,4 @@ typedef struct
  *
  * @retval  Point to SEMS sensor instance.
  */         
-sems_sensor_t* create_gpio_sensor(nrf_drv_gpiote_pin_t pin, nrf_gpio_pin_pull_t pull);
+sems_sensor_t* get_gpio_sensor(nrf_drv_gpiote_pin_t pin, nrf_gpio_pin_pull_t pull);

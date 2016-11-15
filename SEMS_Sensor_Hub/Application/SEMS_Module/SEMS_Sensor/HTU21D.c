@@ -2,6 +2,7 @@
 #define _HTU21D_H
 
 #include "HTU21D.h"
+#include <stdlib.h>
 #include "nrf_delay.h"
 #include "app_error.h"
 #include "app_timer.h"
@@ -16,6 +17,8 @@
 #define SHIFTED_DIVISOR 0x988000 //This is the 0x0131 polynomial shifted to farthest left of three bytes
 
 #define HTU21D_READ_GAP 0x32
+
+static sems_sensor_t *p_singleton_sensor = NULL;
 
 static uint8_t checkCRC(uint16_t sensorData, uint8_t checkSum)
 {
@@ -104,7 +107,6 @@ static ret_code_t get_htu21d_humidity(sems_htu21d_sensor_config_t const *p_confi
 }
 
 
-static bool is_busy;
 static uint8_t buffer[3];
 static app_twi_transfer_t write_transfer = APP_TWI_WRITE(HTU21D_ADDRESS, buffer, 1, APP_TWI_NO_STOP);
 static app_twi_transfer_t read_transfer = APP_TWI_READ(HTU21D_ADDRESS, buffer, 3, APP_TWI_NO_STOP);
@@ -112,53 +114,86 @@ static app_twi_transfer_t read_transfer = APP_TWI_READ(HTU21D_ADDRESS, buffer, 3
 static ret_code_t get_data(sems_sensor_t const *p_sensor, sems_htu21d_data_t  *p_data)
 {    
     sems_htu21d_sensor_config_t const *p_config = p_sensor->p_sensor_config;
-    if (is_busy == true) 
-    {
-        return NRF_ERROR_BUSY;
-    }
-    is_busy = true;
-    
+
     ret_code_t err_code = get_htu21d_temperature(p_config, &write_transfer, &read_transfer, &(p_data->tempeature));
     if (err_code != NRF_SUCCESS)
     {
-        is_busy = false;
         return err_code;
     }
     err_code = get_htu21d_humidity(p_config, &write_transfer, &read_transfer, &(p_data->humidity));
     if (err_code != NRF_SUCCESS)
     {
-        is_busy = false;
         return err_code;
     }
-    is_busy = false;
     return err_code;
 }
 
 static ret_code_t get_sensor_data(sems_sensor_t const *p_sensor)
-{       
+{
+    if (p_sensor != p_singleton_sensor)
+    {
+        return NRF_ERROR_INVALID_PARAM;
+    }
     return get_data(p_sensor, p_sensor->p_sensor_data);
 }
 
 static ret_code_t sems_htu21d_sensor_uninit(sems_sensor_t const  *p_sensor)
 {
+    if (p_sensor != p_singleton_sensor)
+    {
+        return NRF_ERROR_INVALID_PARAM;
+    }
+    
+    sems_htu21d_sensor_config_t *p_config = p_singleton_sensor->p_sensor_config;
+    free(p_config);
+    p_singleton_sensor->p_sensor_config = NULL;
+    
+    free(p_singleton_sensor->p_sensor_data);
+    p_singleton_sensor->p_sensor_data = NULL;
+    
+    free(p_singleton_sensor);
+    p_singleton_sensor = NULL;
+    p_sensor = NULL;
+    
     return NRF_SUCCESS;
 }
 
 static ret_code_t sems_htu21d_sensor_init(sems_sensor_t const  *p_sensor)
 {
+    if (p_sensor != p_singleton_sensor)
+    {
+        return NRF_ERROR_INVALID_PARAM;
+    }
     return NRF_SUCCESS;
 }
 
-const static sems_htu21d_sensor_config_t htu21d_config = HTU21D_CONFIG;
-    
-static sems_htu21d_data_t htu21d_data = HTU21D_DATA_EMPTY;
-
-static sems_sensor_t sensor;
-
 sems_sensor_t* get_sems_htu21d_sensor()
 {
-    SEMS_SENSOR_INIT(sensor,SEMS_HUMIDTY_TEMPERATURE_TAG, &htu21d_config, &htu21d_data, sizeof(sems_htu21d_data_t), get_sensor_data, sems_htu21d_sensor_init, sems_htu21d_sensor_uninit, NULL);
-    return &sensor;
+    if (p_singleton_sensor != NULL)
+    {
+        return p_singleton_sensor;
+    }
+    
+    sems_htu21d_data_t *p_data = (sems_htu21d_data_t*)malloc(sizeof(sems_htu21d_data_t));
+    sems_htu21d_sensor_config_t *p_config = (sems_htu21d_sensor_config_t*)malloc(sizeof(sems_htu21d_sensor_config_t));
+    p_singleton_sensor = (sems_sensor_t*)malloc(sizeof(sems_sensor_t));
+    
+    if (p_singleton_sensor == NULL || p_data == NULL || p_config == NULL)
+    {
+        free(p_singleton_sensor);
+        free(p_data);
+        free(p_config);
+        p_singleton_sensor = NULL;
+        p_data = NULL;
+        p_config = NULL;
+        return NULL;
+    }
+    
+    HTU21D_CONFIG_SETUP(p_config);
+    HTU21D_DATA_EMPTY_SETUP(p_data);
+    
+    SEMS_SENSOR_SETUP_WITH_OUT_TIMER(p_singleton_sensor,SEMS_HUMIDTY_TEMPERATURE_TAG, p_config, p_data, sizeof(sems_htu21d_data_t), get_sensor_data, sems_htu21d_sensor_init, sems_htu21d_sensor_uninit, NULL);
+    return p_singleton_sensor;
 }
 
 

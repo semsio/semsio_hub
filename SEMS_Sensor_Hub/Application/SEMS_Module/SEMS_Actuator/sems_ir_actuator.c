@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "sems_ir_actuator.h"
 #include "app_error.h"
 #include "nrf.h"
@@ -15,6 +16,18 @@ static bool     m_busy;
 
 static uint32_t raw_buffer[SEMS_IR_BUFFER_LEN];
 
+static sems_actuator_t *p_singleton_actuator = NULL;
+
+static void free_actuator(sems_actuator_t *p_actuator)
+{
+    sems_ir_config_t *p_config = (sems_ir_config_t*)p_actuator->p_actuator_config;
+
+    free(p_config);
+    p_actuator->p_actuator_config = NULL;
+    free(p_actuator);
+    p_actuator = NULL;
+}
+
 static uint32_t pulse_count_calculate(uint32_t time_us)
 {
     return (time_us + (SEMS_IR_CARRIER_LOW_US + SEMS_IR_CARRIER_HIGH_US) / 2) / (SEMS_IR_CARRIER_LOW_US + SEMS_IR_CARRIER_HIGH_US);
@@ -22,6 +35,10 @@ static uint32_t pulse_count_calculate(uint32_t time_us)
 
 static ret_code_t sems_ir_init(sems_actuator_t const *p_actuator)
 {
+    if (p_actuator != p_singleton_actuator)
+    {
+        return NRF_ERROR_INVALID_PARAM;
+    }
     nrf_drv_gpiote_pin_t *p_ir_pin = (nrf_drv_gpiote_pin_t*)p_actuator->p_actuator_config;
     nrf_drv_gpiote_pin_t ir_pin = *p_ir_pin;
     ret_code_t err_code = 0;
@@ -64,11 +81,30 @@ static ret_code_t sems_ir_init(sems_actuator_t const *p_actuator)
     err_code |= sd_ppi_channel_enable_set(1 << SEMS_IR_PPI_CH_A | 1 << SEMS_IR_PPI_CH_B | 1 << SEMS_IR_PPI_CH_C | 1 << SEMS_IR_PPI_CH_D | 1 << SEMS_IR_PPI_CH_E);
     
     m_busy = false;
+
+    if (err_code != NRF_SUCCESS)
+    {
+        err_code |= sd_ppi_group_task_disable(SEMS_IR_PPI_GROUP);
+        err_code |= sd_nvic_DisableIRQ(SEMS_IR_CARRIER_COUNTER_IRQn);
+        nrf_drv_gpiote_out_uninit(ir_pin);
+        nrf_drv_gpiote_out_task_disable(ir_pin);
+        
+        free_actuator(p_singleton_actuator);
+        p_singleton_actuator = NULL;
+        
+        m_busy = false;
+    }
+
     return err_code;
 }
 
 static ret_code_t sems_ir_uninit(sems_actuator_t const *p_actuator)
 {
+    if (p_actuator != p_singleton_actuator)
+    {
+        return NRF_ERROR_INVALID_PARAM;
+    }
+    
     nrf_drv_gpiote_pin_t ir_pin = (nrf_drv_gpiote_pin_t)&p_actuator->p_actuator_config;
     ret_code_t err_code = 0;
     err_code |= sd_ppi_channel_enable_clr(1 << SEMS_IR_PPI_CH_A | 1 << SEMS_IR_PPI_CH_B | 1 << SEMS_IR_PPI_CH_C | 1 << SEMS_IR_PPI_CH_D | 1 << SEMS_IR_PPI_CH_E);
@@ -76,10 +112,11 @@ static ret_code_t sems_ir_uninit(sems_actuator_t const *p_actuator)
     err_code |= sd_nvic_DisableIRQ(SEMS_IR_CARRIER_COUNTER_IRQn);
     nrf_drv_gpiote_out_uninit(ir_pin);
     nrf_drv_gpiote_out_task_disable(ir_pin);
+
+    free_actuator(p_singleton_actuator);
+    p_singleton_actuator = NULL;
     return err_code;
 }
-
-
 
 void SEMS_IR_CARRIER_COUNTER_IRQHandler(void)
 {
@@ -126,8 +163,10 @@ ret_code_t sems_ir_row_send(uint32_t p_time_us[], uint32_t length)
 
 static ret_code_t sems_ir_execute(sems_actuator_t const *p_actuator, void *p_data)
 {
-    if (p_data == NULL)
+    if (p_actuator != p_singleton_actuator)
+    {
         return NRF_ERROR_INVALID_PARAM;
+    }
     
     sems_ir_operate_data_t *p_operate_data = (sems_ir_operate_data_t*)p_data;
     
@@ -158,13 +197,21 @@ static ret_code_t sems_ir_execute(sems_actuator_t const *p_actuator, void *p_dat
     
 }
 
-
-static sems_ir_config ir_config;
-static sems_actuator_t sems_actuator;
-
 sems_actuator_t* get_sems_ir_actuator(nrf_drv_gpiote_pin_t ir_pin)
 {
-    ir_config = ir_pin;
-    SEMS_ACTUATOR_INIT(sems_actuator,SEMS_IR_TAG, &ir_config, sems_ir_init, sems_ir_uninit, sems_ir_execute);
-    return &sems_actuator;
+    if (p_singleton_actuator != NULL)
+    {
+        return p_singleton_actuator;
+    }
+
+    sems_ir_config_t *p_config = (sems_ir_config_t*)malloc(sizeof(sems_ir_config_t));
+    p_singleton_actuator = (sems_actuator_t*)malloc(sizeof(sems_actuator_t));
+    if (p_config == NULL || p_singleton_actuator == NULL)
+    {
+        free(p_config);
+        free(p_singleton_actuator);
+        return NULL;
+    }
+    SEMS_ACTUATOR_SETUP(p_singleton_actuator,SEMS_IR_TAG, &p_config, sems_ir_init, sems_ir_uninit, sems_ir_execute);
+    return p_singleton_actuator;
 }

@@ -27,6 +27,8 @@
 #define TSL2561_ADD_1		0x49
 #define TSL2561_ADD_2		0x29
 
+#define TSL2561_BUFFER_SIZE 0x02
+
 /**
  * @brief integration time.
  */
@@ -57,29 +59,32 @@ typedef float sems_tsl2561_lux_t;
 /**
  * @brief setup a TSL2561 config with TWI salve address @ref TSL2561_ADD_0
  */
-#define TSL2561_CONFIG_0                                                        \
-    {                                                                           \
-        .p_app_twi = P_SEMS_TWI_INSTANCE,                                       \
-        .slave_addr = TSL2561_ADD_0,                                            \
-    } 
+#define TSL2561_CONFIG_DEF_SETUP(p_config)         \
+    do                                             \
+    {                                              \
+        p_config->p_app_twi = P_SEMS_TWI_INSTANCE; \
+        p_config->slave_addr = TSL2561_ADD_0;      \
+    } while (0)
 
 /**
  * @brief setup a TSL2561 config with TWI salve address @ref TSL2561_ADD_1
- */    
-#define TSL2561_CONFIG_1                                                        \
-    {                                                                           \
-        .p_app_twi = P_SEMS_TWI_INSTANCE,                                       \
-        .slave_addr = TSL2561_ADD_1,                                            \
-    } 
+ */
+#define TSL2561_CONFIG_ADD49_SETUP(p_config)       \
+    do                                             \
+    {                                              \
+        p_config->p_app_twi = P_SEMS_TWI_INSTANCE; \
+        p_config->slave_addr = TSL2561_ADD_1;      \
+    } while (0)
 
 /**
  * @brief setup a TSL2561 config with TWI salve address @ref TSL2561_ADD_2
  */
-#define TSL2561_CONFIG_2                                                        \
-    {                                                                           \
-        .p_app_twi = P_SEMS_TWI_INSTANCE,                                       \
-        .slave_addr = TSL2561_ADD_2,                                            \
-    } 
+#define TSL2561_CONFIG_ADD29_SETUP(p_config)       \
+    do                                             \
+    {                                              \
+        p_config->p_app_twi = P_SEMS_TWI_INSTANCE; \
+        p_config->slave_addr = TSL2561_ADD_2;      \
+    } while (0)
 
 /**
  * @brief Function for get a TSL2561 SEMS sensor with slave address is @ref TSL2561_ADD_0

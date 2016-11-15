@@ -39,6 +39,8 @@
 #include "sems_ir_nec_encoder.h"
 
 #include "sems.pb.h"
+#include "nrf_delay.h"
+#include "test_sensor.h"
 
 #define APP_TIMER_OP_QUEUE_SIZE         8                                           /**< Size of timer operation queues. */
 #define DEAD_BEEF                       0xDEADBEEF                                  /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
@@ -142,7 +144,7 @@ void sensor_init()
     APP_ERROR_CHECK(err_code);
     
     //create gpio sensor,register event,add to ble advertising once.
-    sems_sensor_t *p_gpio20 = create_gpio_sensor(20, NRF_GPIO_PIN_PULLUP);
+    sems_sensor_t *p_gpio20 = get_gpio_sensor(20, NRF_GPIO_PIN_PULLUP);
     err_code = sems_sensor_init(p_gpio20);
     APP_ERROR_CHECK(err_code);
     nrf_gpiote_polarity_t t = NRF_GPIOTE_POLARITY_HITOLO;
@@ -204,7 +206,7 @@ void ble_action_handler(sems_ActionData *action_data)
 /**@brief Function for application main entry.
  */
 int main(void)
-{ 
+{
     timers_init();
     sems_init();
     
@@ -213,6 +215,7 @@ int main(void)
     // Set your action handler
     sems_set_action_handler(ble_action_handler);
     sems_ble_start();
+
     
 //  Enter main loop.
     for (;;)

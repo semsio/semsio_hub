@@ -89,23 +89,23 @@ void test_sensor()
     err_code = sems_sensor_init(p_tsl2561);
     APP_ERROR_CHECK(err_code);
 
-    sems_sensor_t *p_gpio20 = create_gpio_sensor(20, NRF_GPIO_PIN_PULLUP);
-    err_code = sems_sensor_init(p_gpio20);
+//    sems_sensor_t *p_gpio20 = get_gpio_sensor(20, NRF_GPIO_PIN_PULLUP);
+//    err_code = sems_sensor_init(p_gpio20);
+//    APP_ERROR_CHECK(err_code);
+
+//    m_ir_actuator_prt = get_sems_ir_actuator(24);
+//    err_code = sems_actuator_init(m_ir_actuator_prt);
+//    APP_ERROR_CHECK(err_code);
+
+    err_code = sems_sensor_polling(p_htu21d, data_handler, 1000);
     APP_ERROR_CHECK(err_code);
 
-    m_ir_actuator_prt = get_sems_ir_actuator(24);
-    err_code = sems_actuator_init(m_ir_actuator_prt);
+    err_code = sems_sensor_polling(p_tsl2561, data_handler, 1000);
     APP_ERROR_CHECK(err_code);
 
-    err_code = sems_sensor_polling(p_htu21d, data_handler, 1000*5);
-    APP_ERROR_CHECK(err_code);
-
-    err_code = sems_sensor_polling(p_tsl2561, data_handler, 1000*10);
-    APP_ERROR_CHECK(err_code);
-
-    nrf_gpiote_polarity_t t = NRF_GPIOTE_POLARITY_HITOLO;
-    err_code = sems_sensor_set_event_handler(p_gpio20, event_data_handler, &t);
-    APP_ERROR_CHECK(err_code);
+//    nrf_gpiote_polarity_t t = NRF_GPIOTE_POLARITY_HITOLO;
+//    err_code = sems_sensor_set_event_handler(p_gpio20, event_data_handler, &t);
+//    APP_ERROR_CHECK(err_code);
     		
     while (true)
     {
@@ -128,19 +128,19 @@ void ir_send()
 //    
 //  ret_code_t err_code = sems_ir_send(&data, sems_ir_nec_encode);
     
-    uint16_t raw_data [10] ={ 100,200,300,400,500,600,700,800,900,1000};
-
-    sems_raw_data data;
-    data.p_raw_data = raw_data;
-    data.length = 10;
-    
-    sems_ir_operate_data_t ir_data;
-    ir_data.p_data = &data;
-    ir_data.encode_handler = sems_ir_raw_encode;
-    ret_code_t err_code = sems_actuator_execute(m_ir_actuator_prt, &ir_data);
-    if (err_code != NRF_SUCCESS)
-    {
-    NRF_LOG_INFO("IR BUSY \n");
-    NRF_LOG_FLUSH();
-    }
+//    uint16_t raw_data [10] ={ 100,200,300,400,500,600,700,800,900,1000};
+//
+//    sems_raw_data data;
+//    data.p_raw_data = raw_data;
+//    data.length = 10;
+//    
+//    sems_ir_operate_data_t ir_data;
+//    ir_data.p_data = &data;
+//    ir_data.encode_handler = sems_ir_raw_encode;
+//    ret_code_t err_code = sems_actuator_execute(m_ir_actuator_prt, &ir_data);
+//    if (err_code != NRF_SUCCESS)
+//    {
+//    NRF_LOG_INFO("IR BUSY \n");
+//    NRF_LOG_FLUSH();
+//    }
 }

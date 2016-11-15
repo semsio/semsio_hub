@@ -64,10 +64,10 @@ struct sems_actuator_s
 
 
 /**
- * @brief SEMS actuator initialize
+ * @brief Setup SEMS actuator
  *
  * 
- * @param[in] actuator_id       SEMS actuator instance, will be initialized.
+ * @param[in] p_actuator        Pointer to SEMS actuator instance, will be initialized.
  * @parem[in] tag               Operator tag.
  * @param[in] p_config          Pointer to the actuator config instance; Value can't be NULL.
  * @param[in] init              Pointer to initialize actuator hanlder functionn. Value can't be NULL. 
@@ -78,14 +78,14 @@ struct sems_actuator_s
  *
  * @note This macro will create a app time as a static varible.And do not change the timer NEVER !!
  */
-#define SEMS_ACTUATOR_INIT(actuator_id, tag, p_config, init, uninit, execute)  \
+#define SEMS_ACTUATOR_SETUP(p_actuator, tag, p_config, init, uninit, execute)  \
     do {                                                        \
-        actuator_id.actuator_init = init;                       \
-        actuator_id.actuator_uninit = uninit;                   \
-        actuator_id.execute_operation = execute;                \
-        actuator_id.actuator_tag = tag;                         \
-        actuator_id.actuator_state = SEMS_ACTUATOR_UNINITED;    \
-        actuator_id.p_actuator_config = p_config;               \
+        p_actuator->actuator_init = init;                       \
+        p_actuator->actuator_uninit = uninit;                   \
+        p_actuator->execute_operation = execute;                \
+        p_actuator->actuator_tag = tag;                         \
+        p_actuator->actuator_state = SEMS_ACTUATOR_UNINITED;    \
+        p_actuator->p_actuator_config = p_config;               \
     } while(0);
         
         

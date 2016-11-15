@@ -37,7 +37,7 @@
 /**
  * @brief IR actuator config type.
  */
-typedef nrf_drv_gpiote_pin_t sems_ir_config;
+typedef nrf_drv_gpiote_pin_t sems_ir_config_t;
 
 /**
  * @brief Convert send data to raw data function prototype. 

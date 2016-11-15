@@ -106,17 +106,18 @@ struct sems_sensor_s
     uint16_t                        sensor_tag;             ///< Tag of SEMS sensor. Never change this variable, after setup.
     semf_sensor_state_t             sensor_state;           ///< State of SEMS sensor. Never set a value directly.
     
-    void const *                    p_sensor_config;        ///< Pointer to config instance of sensor. Never change this variable, after setup.
+    void *                          p_sensor_config;        ///< Pointer to config instance of sensor. Never change this variable, after setup.
     void *                          p_sensor_data;          ///< Pointer to sensor data instance.
     size_t                          data_size;              ///< Size of sensor data.
 };
 
+
 /**
- * @brief SEMS sensor initialize
+ * @brief Setup SEMS sensor 
  *
  * This macro will create a app time as a static varible.
  * 
- * @param[in] sensor_id     SEMS sensor instance, will be initialized.
+ * @param[in] p_sensor      Pointer to SEMS sensor instance, will be setup.
  * @parem[in] tag           Sensor tag.
  * @param[in] p_config      Pointer to the sensor config instance; Value can't be NULL.
  * @param[in] p_data        Pointer to the sensor data instance; Value can't be NULL.
@@ -130,24 +131,55 @@ struct sems_sensor_s
  *
  * @note This macro will create a app time as a static varible.And do not change the timer NEVER !!
  */
-#define SEMS_SENSOR_INIT(sensor_id, tag, p_config, p_data, size, get_data, init,  uninit, set_event)  \
+#define SEMS_SENSOR_SETUP_WITH_OUT_TIMER(p_sensor, tag, p_config, p_data, size, get_data, init,  uninit, set_event)  \
     do {                                                \
         APP_TIMER_DEF(sensor_id##_timer_id);            \
-        sensor_id.sensor_init = init;                   \
-        sensor_id.sensor_uninit = uninit;               \
-        sensor_id.get_sensor_data = get_data;           \
-        sensor_id.set_sensor_event = set_event;         \
-        sensor_id.app_timer_id = sensor_id##_timer_id;  \
-        sensor_id.polling_data_handler = NULL;          \
-        sensor_id.event_data_handler = NULL;            \
-        sensor_id.sensor_tag = tag;                     \
-        sensor_id.sensor_state = SEMS_SENSOR_UNINITED;  \
-        sensor_id.p_sensor_config = p_config;           \
-        sensor_id.p_sensor_data = p_data;               \
-        sensor_id.data_size = size;                     \
+        p_sensor->sensor_init = init;                   \
+        p_sensor->sensor_uninit = uninit;               \
+        p_sensor->get_sensor_data = get_data;           \
+        p_sensor->set_sensor_event = set_event;         \
+        p_sensor->app_timer_id = sensor_id##_timer_id;  \
+        p_sensor->polling_data_handler = NULL;          \
+        p_sensor->event_data_handler = NULL;            \
+        p_sensor->sensor_tag = tag;                     \
+        p_sensor->sensor_state = SEMS_SENSOR_UNINITED;  \
+        p_sensor->p_sensor_config = p_config;           \
+        p_sensor->p_sensor_data = p_data;               \
+        p_sensor->data_size = size;                     \
     } while(0)
 
-
+/**
+ * @brief Setup SEMS sensor
+ * 
+ * @param[in] p_app_timer   Pointer to APP_TIMER instance. 
+ * @param[in] p_sensor      Pointer to SEMS sensor instance, will be setup.
+ * @parem[in] tag           Sensor tag.
+ * @param[in] p_config      Pointer to the sensor config instance; Value can't be NULL.
+ * @param[in] p_data        Pointer to the sensor data instance; Value can't be NULL.
+ * @param[in] size          Size of sensor data.
+ * @param[in] get_data      Pointer to get sensor data hanlder function. Value can't be NULL.
+ * @param[in] init          Pointer to initialize sensor hanlder functionn. Value can't be NULL. 
+                            If initial is not necessary, just create a function and return NRF_SUCCESS.
+ * @param[in] uninit        Pointer to uninitialize sensor hanlder function. Value can't be NULL.
+                            If uninitial is not necessary, just create a function and return NRF_SUCCESS.
+ * @param[in] set_event     Pointer to set sensor event hanlder function.If it is not necessary, just set value is NULL.
+ */
+#define SEMS_SENSOR_SETUP(p_sensor, p_app_timer, tag, p_config, p_data, size, get_data, init,  uninit, set_event)  \
+    do {                                                \
+        p_sensor->sensor_init = init;                   \
+        p_sensor->sensor_uninit = uninit;               \
+        p_sensor->get_sensor_data = get_data;           \
+        p_sensor->set_sensor_event = set_event;         \
+        p_sensor->app_timer_id = p_app_timer;           \
+        p_sensor->polling_data_handler = NULL;          \
+        p_sensor->event_data_handler = NULL;            \
+        p_sensor->sensor_tag = tag;                     \
+        p_sensor->sensor_state = SEMS_SENSOR_UNINITED;  \
+        p_sensor->p_sensor_config = p_config;           \
+        p_sensor->p_sensor_data = p_data;               \
+        p_sensor->data_size = size;                     \
+    } while(0)
+        
 /**
  * @brief Function for manual flush SEMS sensor data.
  * 
